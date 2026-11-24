@@ -179,8 +179,62 @@ form .btn.rojo{box-shadow:4px 4px 0 #1b1310;justify-content:center}
 .visita div{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:24px}
 .visita b{display:block;font:22px Anton,sans-serif;text-transform:uppercase;margin-bottom:6px}
 footer{position:relative;overflow:hidden;padding-top:40px;border-top:1px solid var(--line)}
-footer .gigante{font:clamp(80px,22vw,320px)/.8 Anton,sans-serif;text-align:center;color:var(--rojo);letter-spacing:-.01em;margin-bottom:-.06em;user-select:none}
-footer .fin{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;color:var(--mute);font-size:14px;padding-bottom:28px}
+footer .gigante{font:clamp(80px,22vw,320px)/.8 Anton,sans-serif;text-align:center;color:var(--rojo);letter-spacing:-.01em;margin-bottom:0;user-select:none}
+footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;color:var(--mute);font-size:14px;padding-bottom:28px}
+
+
+/* ---------- Entrada del wordmark y animación al hacer scroll (como el sitio de Omar) ---------- */
+.wordmark>*{animation:sube .9s cubic-bezier(.2,.7,.2,1) both}
+.wordmark>*:nth-child(2){animation-delay:.12s}.wordmark>*:nth-child(3){animation-delay:.24s}
+@keyframes sube{from{opacity:0;transform:translateY(30%)}}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- Nosotros / historia ---------- */
+.historia{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:start;margin-top:40px}
+.historia p{font-size:18px;color:var(--mute);margin:0 0 18px}
+.historia p strong{color:var(--ink);font-weight:600}
+.manifiesto{position:relative;background:var(--rojo);color:#fff;border-radius:32px;padding:clamp(28px,4vw,48px);transform:rotate(-1.2deg);box-shadow:10px 10px 0 var(--azul)}
+.manifiesto blockquote{margin:0;font:italic clamp(28px,3.2vw,42px)/1.1 "Instrument Serif",serif}
+.manifiesto cite{display:block;margin-top:18px;font:800 13px Manrope,sans-serif;font-style:normal;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.manifiesto svg{position:absolute;width:56px;height:56px;right:-18px;top:-22px;color:var(--beige)}
+
+/* ---------- Planes ---------- */
+.planes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
+.plan{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:28px;transition:transform .25s}
+.plan:hover{transform:translateY(-4px) rotate(-1deg)}
+.plan svg{width:52px;height:52px;color:var(--acc)}
+.plan h3{font:clamp(30px,3vw,40px) Anton,sans-serif;text-transform:uppercase;margin:14px 0 8px}
+.plan p{margin:0;color:var(--mute)}
+
+/* ---------- Métodos de café ---------- */
+.metodos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:40px}
+.metodo{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:6px;align-content:start}
+.metodo b{font:26px Anton,sans-serif;text-transform:uppercase}
+.metodo span{font:600 13px Manrope,sans-serif;color:var(--acc)}
+.metodo p{margin:0;color:var(--mute);font-size:15px}
+
+/* ---------- La marca: colores, valores, propósito ---------- */
+.colores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:40px}
+.color{display:grid;gap:10px;align-content:start}
+.color i{display:block;width:100%;max-width:170px;aspect-ratio:1;border-radius:50%;border:2px solid var(--line);box-shadow:inset -14px -14px 0 rgba(0,0,0,.18)}
+.color b{font:30px Anton,sans-serif;text-transform:uppercase;margin-top:6px}
+.color p{margin:0;color:var(--mute)}
+.valores{display:flex;flex-wrap:wrap;gap:12px;margin:48px 0 0}
+.valor{background:var(--beige);color:#1b1310;border-radius:999px;padding:12px 22px;font:800 16px Manrope,sans-serif;transform:rotate(var(--r,0deg));box-shadow:4px 4px 0 var(--rojo)}
+.valor:nth-child(2n){--r:1.5deg;background:#fff;box-shadow:4px 4px 0 var(--azul)}
+.valor:nth-child(3n){--r:-2deg}
+.valor small{display:block;font:500 13px Manrope,sans-serif;color:#5a4a40}
+.mvv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
+.mvv div{border-top:2px solid var(--ink);padding-top:16px}
+.mvv b{font:24px Anton,sans-serif;text-transform:uppercase}
+.mvv p{margin:6px 0 0;color:var(--mute)}
+
+@media(max-width:900px){
+  .historia,.planes,.mvv{grid-template-columns:minmax(0,1fr)}
+  .metodos,.colores{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .manifiesto{transform:none}
+}
 
 @media(max-width:900px){
   .reserva,.actos,.visita,.carta{grid-template-columns:minmax(0,1fr)}
@@ -243,7 +297,7 @@ footer .fin{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;c
       <span>N<b>0</b>CTRA</span>
     </a>
     <nav aria-label="Principal">
-      <a href="#promos">Promos</a><a href="#actos">Horarios</a><a href="#carta">Carta</a><a href="#noches">Noches</a><a href="#visita">Visítanos</a>
+      <a href="#nosotros">Nosotros</a><a href="#promos">Promos</a><a href="#actos">Horarios</a><a href="#carta">Carta</a><a href="#noches">Noches</a><a href="#visita">Visítanos</a>
     </nav>
     <a class="btn rojo" href="#reservar">Reservar</a>
   </div>
@@ -339,6 +393,27 @@ footer .fin{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;c
     </div>
   </section>
 
+
+  <!-- ============ Nosotros: historia y manifiesto ============ -->
+  <section class="band" id="nosotros">
+    <div class="wrap">
+      <span class="mano">quiénes somos</span>
+      <h2>Una casa, <em>dos momentos.</em></h2>
+      <div class="historia">
+        <div>
+          <p>N0CTRA nace del cariño por el café y de una idea sencilla: <strong>no siempre tenemos que adaptar nuestra rutina a la de los demás.</strong> Hay días para concentrarse y noches para soltar la cabeza, y ambos merecen un buen lugar.</p>
+          <p>Queríamos un espacio elegante, moderno y acogedor. Que al entrar sientas que <strong>no estás en cualquier esquina</strong>, pero sin el límite de tener que comportarte. Aquí te expresas como quieras, sin perder la prudencia.</p>
+          <p>De día es un refugio tranquilo de luz fría, apto para reuniones, trabajo o simplemente estar cómodo. De noche la luz se vuelve cálida, sube la música y el lugar se convierte en un sitio para despejarte y <strong>sentir que vuelves a empezar.</strong> No son dos negocios: son dos actos de la misma historia.</p>
+        </div>
+        <figure class="manifiesto" style="margin:0">
+          <svg aria-hidden="true"><use href="#estrella"/></svg>
+          <blockquote>“No importa si vienes por el primer café o por la última canción. Lo importante es cómo te hace sentir el lugar.”</blockquote>
+          <cite>Manifiesto N0CTRA</cite>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ Actos ============ -->
   <section class="band" id="actos">
     <div class="doodles" aria-hidden="true" style="opacity:.6"><svg><rect width="100%" height="100%" fill="url(#mosaico)"/></svg></div>
@@ -385,6 +460,21 @@ footer .fin{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;c
     </div>
   </section>
 
+
+  <!-- ============ Para quién / planes ============ -->
+  <section class="band" id="planes" style="padding-top:0">
+    <div class="wrap">
+      <span class="mano">para los que buscan salir de la rutina</span>
+      <h2>Un plan <em>para cada momento</em></h2>
+      <p class="lead">Para gente sociable, creativa y curiosa, de 18 a 35 o de cualquier edad que se sienta así. Que disfruta la estética, la calidad y las experiencias nuevas.</p>
+      <div class="planes">
+        <article class="plan"><svg aria-hidden="true"><use href="#chispa"/></svg><h3>Para crear</h3><p>Mesa amplia, enchufe y café de filtro. Un lugar para inspirarte, leer, estudiar o sacar ese proyecto.</p></article>
+        <article class="plan"><svg aria-hidden="true"><use href="#corazon"/></svg><h3>Para compartir</h3><p>Bebidas ricas, algo al centro de la mesa y un ambiente que hace que la plática se alargue.</p></article>
+        <article class="plan"><svg aria-hidden="true"><use href="#copa"/></svg><h3>Para explorar</h3><p>Combinaciones que jamás imaginarías probar, de día en taza y de noche en copa.</p></article>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ Carta ============ -->
   <section class="band" id="carta" style="padding-top:0">
     <div class="wrap">
@@ -402,11 +492,38 @@ footer .fin{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;c
     </div>
   </section>
 
+
+  <!-- ============ Métodos de café ============ -->
+  <section class="band" id="metodos" style="padding-top:0">
+    <div class="wrap">
+      <span class="mano">el café, a tu manera</span>
+      <h2>Métodos <em>de la barra</em></h2>
+      <p class="lead">El mismo grano sabe distinto según cómo se prepara. Pídelo como quieras o deja que el barista te recomiende.</p>
+      <div class="metodos" id="listaMetodos"></div>
+    </div>
+  </section>
+
   <!-- ============ Cartelera de noches ============ -->
   <section class="band" id="noches" style="padding-top:0">
     <div class="wrap">
       <h2>Cartelera <em>de noche</em></h2>
       <div class="cartel" id="listaAgenda"></div>
+    </div>
+  </section>
+
+
+  <!-- ============ La marca: colores, valores, propósito ============ -->
+  <section class="band" id="marca" style="padding-top:0">
+    <div class="wrap">
+      <span class="mano">lo que nos mueve</span>
+      <h2>Los colores <em>que nos cuentan</em></h2>
+      <div class="colores" id="listaColores"></div>
+      <div class="valores" id="listaValores"></div>
+      <div class="mvv">
+        <div><b>Propósito</b><p>Crear momentos memorables alrededor del café y de los encuentros cotidianos.</p></div>
+        <div><b>Misión</b><p>Ofrecer bebidas y alimentos preparados con atención al detalle, en un entorno que invite a conectar, crear y volver.</p></div>
+        <div><b>Visión</b><p>Ser una cafetería reconocida por su identidad visual, su calidad y su experiencia acogedora.</p></div>
+      </div>
     </div>
   </section>
 
@@ -509,6 +626,35 @@ const AGENDA = [
 /* Frases de las cintas cruzadas */
 const CINTA1 = ["Café de día","Noche con sonido","No estás en cualquier esquina","Exprésate con estilo"];
 const CINTA2 = ["Primer acto 8:00","Intermedio","Segundo acto 22:00","Vinilos · DJ · Cócteles"];
+
+
+/* Métodos de café: nombre, perfil en taza y descripción breve */
+const METODOS = [
+  {n:"V60",p:"Limpio · floral",d:"Filtrado a mano en cono. Resalta la acidez y las notas frutales del grano."},
+  {n:"Espresso",p:"Intenso · con cuerpo",d:"Agua a presión en 25 segundos. La base del latte, el capuchino y el carajillo."},
+  {n:"Chemex",p:"Suave · brillante",d:"Filtro grueso que deja una taza muy limpia, ideal para compartir."},
+  {n:"Aeropress",p:"Redondo · versátil",d:"Inmersión y presión manual. Rápido y con mucho sabor."},
+  {n:"Prensa francesa",p:"Denso · aceitoso",d:"Inmersión completa sin filtro de papel. Taza con mucho cuerpo."},
+  {n:"Moka",p:"Fuerte · tostado",d:"La cafetera italiana de estufa. Un café concentrado y con carácter."},
+  {n:"Sifón",p:"Aromático · teatral",d:"Vapor y vacío en vidrio. Tanto espectáculo como sabor."},
+  {n:"Cezve turco",p:"Espeso · especiado",d:"Molienda muy fina hervida a fuego lento, a veces con cardamomo."},
+];
+
+/* Significado de los colores, en palabras de la dueña */
+const COLORES = [
+  {n:"Café",c:"#6b4a35",d:"La calidez y la elegancia, con la vibra de cafetería."},
+  {n:"Beige",c:"#e6d9c3",d:"La tranquilidad. El respiro del día."},
+  {n:"Rojo",c:"#c22f3b",d:"La personalidad que quieras transmitir, y un poco de misterio."},
+  {n:"Azul",c:"#4c7dff",d:"El juego: hacer cosas sin preocuparte por quién te ve. El color que salta a la vista."},
+];
+
+const VALORES = [
+  {n:"Creatividad",d:"Imaginación y personalidad"},
+  {n:"Calidad",d:"Ingredientes, preparación y servicio"},
+  {n:"Comunidad",d:"Espacio para encontrarse"},
+  {n:"Autenticidad",d:"Sin pretensiones"},
+  {n:"Diseño",d:"Cada detalle visual y sensorial"},
+];
 
 const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
@@ -645,6 +791,27 @@ const forz = location.hash.slice(1);
 if (forz==="dia" || forz==="noche"){ manual = true; aplicarActo(forz); } else { aplicarActo(estadoLocal(ahoraLeon()).acto); }
 actualizarEstado();
 setInterval(actualizarEstado, 60000);
+
+/* Secciones estáticas renderizadas desde los arreglos de arriba */
+$("#listaMetodos").innerHTML = METODOS.map(m => `<article class="metodo"><b>${esc(m.n)}</b><span>${esc(m.p)}</span><p>${esc(m.d)}</p></article>`).join("");
+$("#listaColores").innerHTML = COLORES.map(c => `<div class="color"><i style="background:${esc(c.c)}"></i><b>${esc(c.n)}</b><p>${esc(c.d)}</p></div>`).join("");
+$("#listaValores").innerHTML = VALORES.map(v => `<span class="valor">${esc(v.n)}<small>${esc(v.d)}</small></span>`).join("");
+
+/* Aparición escalonada al hacer scroll (misma idea que el sitio de Omar) */
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window){
+  const rvEls = [...document.querySelectorAll(".band h2,.band .lead,.historia>*,.acto,.plan,.item,.metodo,.color,.valor,.mvv>div,.noche-fila,.visita>div,form")];
+  rvEls.forEach(e => e.classList.add("rv"));
+  const io = new IntersectionObserver(es => es.forEach(x => {
+    if (!x.isIntersecting) return;
+    const e = x.target, i = [...e.parentNode.children].indexOf(e);
+    e.style.transitionDelay = (i % 4) * 90 + "ms";   // efecto cascada dentro de cada grupo
+    e.classList.add("in");
+    io.unobserve(e);
+    setTimeout(() => e.style.transitionDelay = "", 1400);
+  }), {threshold:.12});
+  rvEls.forEach(e => io.observe(e));
+}
+
 }
 </script>
 </body>
