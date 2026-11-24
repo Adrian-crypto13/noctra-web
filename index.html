@@ -97,8 +97,8 @@ body.noche .giro{animation-duration:3.2s}
 .cinta{position:absolute;left:-5%;width:110%;display:flex;overflow:hidden;padding:14px 0;font:clamp(22px,3vw,34px) Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap}
 .cinta.c1{top:18%;background:var(--rojo);color:#fff;transform:rotate(-3deg);z-index:2}
 .cinta.c2{top:44%;background:var(--azul);color:#fff;transform:rotate(2.2deg)}
-.cinta .mov{display:flex;flex:none;gap:28px;padding-right:28px;animation:izq 28s linear infinite}
-.cinta.c2 .mov{animation-name:der}
+.pista{display:flex;flex:none;width:max-content;will-change:transform;backface-visibility:hidden}
+.cinta .mov{display:flex;flex:none;gap:28px;padding-right:28px}
 .cinta span{display:inline-flex;align-items:center;gap:28px}
 .cinta svg{width:.8em;height:.8em}
 @keyframes izq{to{transform:translateX(-100%)}}
@@ -107,9 +107,8 @@ body.noche .giro{animation-duration:3.2s}
 /* ---------- Promos en bucle infinito (derecha a izquierda) ---------- */
 .promos{position:relative;padding:clamp(48px,6vw,80px) 0;overflow:hidden}
 .promo-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
-.marquee{display:flex;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.marquee .mov{display:flex;flex:none;gap:22px;padding:14px 11px;animation:izq var(--dur,40s) linear infinite}
-.marquee:hover .mov,.marquee:focus-within .mov{animation-play-state:paused}
+.marquee{display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marquee .mov{display:flex;flex:none;gap:22px;padding:14px 11px}
 .ticket{position:relative;flex:0 0 clamp(260px,30vw,340px);background:var(--beige);color:#1b1310;border-radius:18px;padding:22px 22px 18px;transform:rotate(var(--rot,0deg));box-shadow:6px 6px 0 var(--rojo)}
 .ticket:nth-child(3n+2){--rot:1.5deg;background:#fff;box-shadow:6px 6px 0 var(--azul)}
 .ticket:nth-child(3n){--rot:-1.5deg}
@@ -255,7 +254,7 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .marquee{overflow-x:auto} .cinta .mov[aria-hidden]{display:none}
+  .marquee{overflow-x:auto}
 }
 </style>
 </head>
@@ -374,8 +373,8 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
 
   <!-- ============ Cintas cruzadas ============ -->
   <div class="cintas" aria-hidden="true">
-    <div class="cinta c1"><div class="mov" id="cinta1"></div><div class="mov" aria-hidden="true"></div></div>
-    <div class="cinta c2"><div class="mov" id="cinta2"></div><div class="mov" aria-hidden="true"></div></div>
+    <div class="cinta c1"><div class="pista" data-dir="izq" data-vel="45"><div class="mov" id="cinta1"></div><div class="mov" aria-hidden="true"></div></div></div>
+    <div class="cinta c2"><div class="pista" data-dir="der" data-vel="35"><div class="mov" id="cinta2"></div><div class="mov" aria-hidden="true"></div></div></div>
   </div>
 
   <!-- ============ Promos: bucle infinito ============ -->
@@ -388,8 +387,10 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
       <p class="small" style="max-width:32ch;margin:0">Pasa el mouse o toca una para detenerlas. Promociones de ejemplo, por confirmar.</p>
     </div>
     <div class="marquee" tabindex="0" aria-label="Promociones en movimiento">
-      <div class="mov" id="promoA"></div>
-      <div class="mov" id="promoB" aria-hidden="true"></div>
+      <div class="pista" id="pistaPromos" data-dir="izq" data-vel="50">
+        <div class="mov" id="promoA"></div>
+        <div class="mov" id="promoB" aria-hidden="true"></div>
+      </div>
     </div>
   </section>
 
@@ -743,19 +744,49 @@ function pintarPromos(){
   const html = rep.map(card).join("");
   $("#promoA").innerHTML = html;
   $("#promoB").innerHTML = html;
-  /* Velocidad constante: ~6 s por boleto */
-  document.querySelectorAll(".marquee .mov").forEach(m => m.style.setProperty("--dur", (rep.length*6)+"s"));
+  marquesinas.forEach(m => m.medir());   // el contenido cambió: volver a medir
 }
+
+
+/* ===================== Marquesinas (bucle infinito por script) =====================
+   Cada .pista tiene dos copias idénticas del contenido. Se desplaza con translate3d
+   en cada frame; al recorrer el ancho de una copia, salta de vuelta sin que se note.
+   Se hace con requestAnimationFrame y no con @keyframes porque así se comporta igual
+   en Safari de iPhone, Chrome y Android. */
+const quietoMov = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const marquesinas = [...document.querySelectorAll(".pista")].map(el => {
+  const m = {el, dir: el.dataset.dir === "der" ? 1 : -1, vel: +el.dataset.vel || 40, x: 0, w: 0, pausa: false};
+  m.medir = () => { m.w = el.firstElementChild.getBoundingClientRect().width; m.x = m.dir > 0 ? -m.w : 0; pintar(m); };
+  return m;
+});
+function pintar(m){ m.el.style.transform = `translate3d(${m.x.toFixed(2)}px,0,0)`; }
+let tPrev = null;
+function cuadro(t){
+  const dt = tPrev === null ? 0 : Math.min(0.05, (t - tPrev) / 1000);  // tope por si la pestaña estuvo en segundo plano
+  tPrev = t;
+  for (const m of marquesinas){
+    if (m.pausa || !m.w) continue;
+    m.x += m.dir * m.vel * dt;
+    if (m.dir < 0 && m.x <= -m.w) m.x += m.w;   // hacia la izquierda
+    if (m.dir > 0 && m.x >= 0)    m.x -= m.w;   // hacia la derecha
+    pintar(m);
+  }
+  requestAnimationFrame(cuadro);
+}
+addEventListener("resize", () => marquesinas.forEach(m => m.medir()));
 
 /* ===================== Eventos ===================== */
 $("#cambiar").addEventListener("click", () => { manual = true; aplicarActo(actoVista==="dia" ? "noche" : "dia"); });
 $("#t-dia").addEventListener("click", () => pintarCarta("dia"));
 $("#t-noche").addEventListener("click", () => pintarCarta("noche"));
 
-/* Pausa del bucle en pantallas táctiles: tocar alterna pausa */
-const mq = $(".marquee");
-mq.addEventListener("click", () => mq.querySelectorAll(".mov").forEach(m =>
-  m.style.animationPlayState = m.style.animationPlayState==="paused" ? "running" : "paused"));
+/* Pausa del banner de promos: mouse encima, foco con teclado o un toque en celular */
+const mq = $(".marquee"), mqPista = marquesinas.find(m => m.el.id === "pistaPromos");
+mq.addEventListener("mouseenter", () => mqPista.pausa = true);
+mq.addEventListener("mouseleave", () => mqPista.pausa = false);
+mq.addEventListener("focusin",   () => mqPista.pausa = true);
+mq.addEventListener("focusout",  () => mqPista.pausa = false);
+mq.addEventListener("touchstart",() => mqPista.pausa = !mqPista.pausa, {passive:true});
 
 /* Reserva: arma el mensaje y el enlace wa.me */
 $("#form").addEventListener("submit", e => {
@@ -784,6 +815,11 @@ function actualizarEstado(){
 }
 pintarCinta($("#cinta1"), CINTA1);
 pintarCinta($("#cinta2"), CINTA2);
+/* Arranca las marquesinas. Se vuelven a medir cuando cargan las fuentes, porque cambian el ancho del texto. */
+marquesinas.forEach(m => m.medir());
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => marquesinas.forEach(m => m.medir()));
+if (!quietoMov) requestAnimationFrame(cuadro);
+
 $("#waTxt").textContent = "+" + WHATSAPP;
 $("#f-fecha").min = new Date().toISOString().slice(0,10);
 /* #dia o #noche en el enlace fuerzan el acto (útil para compartir) */
