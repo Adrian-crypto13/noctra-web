@@ -186,6 +186,9 @@ footer .fin{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;c
   .reserva,.actos,.visita,.carta{grid-template-columns:minmax(0,1fr)}
   .noche-fila{grid-template-columns:minmax(0,1fr) auto}
   .noche-fila p{grid-column:1/3;grid-row:2}
+  /* tablet y celular: el sticker baja a la esquina inferior para no tapar el wordmark */
+  .hero{padding-bottom:120px}
+  .sticker{top:auto;bottom:16px;right:16px;width:104px}
 }
 @media(max-width:600px){
   .nav nav{gap:16px;margin-left:0;width:100%;overflow-x:auto;flex-wrap:nowrap}
