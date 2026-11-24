@@ -110,7 +110,7 @@ body.noche .giro{animation-duration:3.2s}
 .marquee{display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .marquee .mov{display:flex;flex:none;gap:22px;padding:14px 11px}
 .ticket{position:relative;flex:0 0 clamp(260px,30vw,340px);background:var(--beige);color:#1b1310;border-radius:18px;padding:22px 22px 18px;transform:rotate(var(--rot,0deg));box-shadow:6px 6px 0 var(--rojo)}
-.ticket:nth-child(3n+2){--rot:1.5deg;background:#fff;box-shadow:6px 6px 0 var(--azul)}
+.ticket:nth-child(3n+2){--rot:1.5deg}
 .ticket:nth-child(3n){--rot:-1.5deg}
 /* perforación de boleto */
 .ticket::before{content:"";position:absolute;left:14px;right:14px;top:62%;border-top:2px dashed rgba(27,19,16,.25)}
@@ -234,6 +234,53 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
   .metodos,.colores{grid-template-columns:repeat(2,minmax(0,1fr))}
   .manifiesto{transform:none}
 }
+
+
+/* ===== Zonas por horario: lo del día siempre en paleta fría, lo de la noche en cálida =====
+   No dependen del modo de la página: un elemento del día se ve "de día" aunque sea de noche. */
+.zona-dia  {--z-bg:#1e2934;--z-bg2:#273545;--z-acc:#a9cbef;--z-pop:#4c7dff;--z-ink:#eaf1f8;--z-mute:#a9b8c8}
+.zona-noche{--z-bg:#2c1311;--z-bg2:#3b1916;--z-acc:#f2a54a;--z-pop:#c22f3b;--z-ink:#f4e5cd;--z-mute:#c9a98e}
+.zona-dia h2 em,.zona-noche h2 em,.zona-dia .mano,.zona-noche .mano{color:var(--z-acc)}
+
+/* Boletos de promo: día = hielo con sombra azul; noche = vino con sombra roja */
+.ticket.zona-dia{background:#e4eef8;color:#13202d;box-shadow:6px 6px 0 var(--z-pop)}
+.ticket.zona-dia .dia,.ticket.zona-dia .precio{color:#2f5fd6}
+.ticket.zona-dia p{color:#3d4d5e}
+.ticket.zona-dia .vivo{background:#2f5fd6}
+.ticket.zona-dia::before{border-top-color:rgba(19,32,45,.25)}
+.ticket.zona-noche{background:var(--z-bg2);color:var(--z-ink);box-shadow:6px 6px 0 var(--z-pop);border:1px solid rgba(242,165,74,.3)}
+.ticket.zona-noche .dia,.ticket.zona-noche .precio{color:var(--z-acc)}
+.ticket.zona-noche p{color:var(--z-mute)}
+.ticket.zona-noche::before{border-top-color:rgba(242,165,74,.3)}
+.ticket.zona-noche .vivo{background:var(--z-acc);color:#2c1311}
+
+/* Carta: la pizarra toma el color del acto elegido */
+.pizarra.zona-dia,.pizarra.zona-noche{background:var(--z-bg);border-color:var(--z-pop);transition:background .5s,border-color .5s}
+.pizarra.zona-dia .item h3,.pizarra.zona-noche .item h3{color:var(--z-ink)}
+.pizarra.zona-dia .item p,.pizarra.zona-noche .item p{color:var(--z-mute)}
+.pizarra .item svg,.pizarra .item .p{color:var(--z-acc,var(--acc))}
+#t-dia[aria-selected=true]{background:#a9cbef;border-color:#a9cbef;color:#13202d}
+#t-noche[aria-selected=true]{background:#f2a54a;border-color:#f2a54a;color:#2c1311}
+#t-dia{border-color:#a9cbef;color:#a9cbef} #t-noche{border-color:#f2a54a;color:#f2a54a}
+
+/* Actos: horas en el color de su luz */
+.acto.d .hora{color:#a9cbef} .acto.n .hora{color:#f2a54a}
+
+/* Planes, métodos y cartelera usan la zona que les toca */
+.plan.zona-dia,.plan.zona-noche,.metodo.zona-dia{background:var(--z-bg);border-color:color-mix(in srgb,var(--z-pop) 45%,transparent)}
+.plan.zona-dia svg,.plan.zona-noche svg,.metodo.zona-dia span{color:var(--z-acc)}
+.plan.zona-dia p,.plan.zona-noche p,.metodo.zona-dia p{color:var(--z-mute)}
+.noche-fila{background:#2c1311;border-color:rgba(242,165,74,.25);color:#f4e5cd}
+.noche-fila p{color:#c9a98e} .noche-fila span{color:#f2a54a}
+.noche-fila.hoy span{color:#fff}
+
+/* Horario en "Visítanos" */
+.h-dia{color:#a9cbef;font-weight:600} .h-noche{color:#f2a54a;font-weight:600}
+
+/* Formulario: la sombra cambia según el acto elegido */
+form{transition:box-shadow .4s}
+form[data-acto="Día"]{box-shadow:10px 10px 0 #4c7dff}
+form[data-acto="Noche"]{box-shadow:10px 10px 0 #c22f3b}
 
 @media(max-width:900px){
   .reserva,.actos,.visita,.carta{grid-template-columns:minmax(0,1fr)}
@@ -469,9 +516,9 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
       <h2>Un plan <em>para cada momento</em></h2>
       <p class="lead">Para gente sociable, creativa y curiosa, de 18 a 35 o de cualquier edad que se sienta así. Que disfruta la estética, la calidad y las experiencias nuevas.</p>
       <div class="planes">
-        <article class="plan"><svg aria-hidden="true"><use href="#chispa"/></svg><h3>Para crear</h3><p>Mesa amplia, enchufe y café de filtro. Un lugar para inspirarte, leer, estudiar o sacar ese proyecto.</p></article>
+        <article class="plan zona-dia"><svg aria-hidden="true"><use href="#chispa"/></svg><h3>Para crear</h3><p>Mesa amplia, enchufe y café de filtro. Un lugar para inspirarte, leer, estudiar o sacar ese proyecto.</p></article>
         <article class="plan"><svg aria-hidden="true"><use href="#corazon"/></svg><h3>Para compartir</h3><p>Bebidas ricas, algo al centro de la mesa y un ambiente que hace que la plática se alargue.</p></article>
-        <article class="plan"><svg aria-hidden="true"><use href="#copa"/></svg><h3>Para explorar</h3><p>Combinaciones que jamás imaginarías probar, de día en taza y de noche en copa.</p></article>
+        <article class="plan zona-noche"><svg aria-hidden="true"><use href="#copa"/></svg><h3>Para explorar</h3><p>Combinaciones que jamás imaginarías probar, de día en taza y de noche en copa.</p></article>
       </div>
     </div>
   </section>
@@ -495,7 +542,7 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
 
 
   <!-- ============ Métodos de café ============ -->
-  <section class="band" id="metodos" style="padding-top:0">
+  <section class="band zona-dia" id="metodos" style="padding-top:0">
     <div class="wrap">
       <span class="mano">el café, a tu manera</span>
       <h2>Métodos <em>de la barra</em></h2>
@@ -505,7 +552,7 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
   </section>
 
   <!-- ============ Cartelera de noches ============ -->
-  <section class="band" id="noches" style="padding-top:0">
+  <section class="band zona-noche" id="noches" style="padding-top:0">
     <div class="wrap">
       <h2>Cartelera <em>de noche</em></h2>
       <div class="cartel" id="listaAgenda"></div>
@@ -559,7 +606,7 @@ footer .fin{padding-top:18px;display:flex;gap:16px;flex-wrap:wrap;justify-conten
       <h2>Visí<em>tanos</em></h2>
       <div class="visita">
         <div><b>Dónde</b>León, Guanajuato<br><span class="small">Dirección exacta por confirmar</span></div>
-        <div><b>Horario</b>Día: 8:00 – 19:00<br>Noche: 22:00 – 3:00<br><span class="small">Días por confirmar</span></div>
+        <div><b>Horario</b><span class="h-dia">Día: 8:00 – 19:00</span><br><span class="h-noche">Noche: 22:00 – 3:00</span><br><span class="small">Días por confirmar</span></div>
         <div><b>Contacto</b>noctracafe@gmail.com<br>WhatsApp: <span id="waTxt"></span></div>
       </div>
     </div>
@@ -625,8 +672,8 @@ const AGENDA = [
 ];
 
 /* Frases de las cintas cruzadas */
-const CINTA1 = ["Café de día","Noche con sonido","No estás en cualquier esquina","Exprésate con estilo"];
-const CINTA2 = ["Primer acto 8:00","Intermedio","Segundo acto 22:00","Vinilos · DJ · Cócteles"];
+const CINTA1 = ["Noche con sonido","Segundo acto 22:00","Vinilos · DJ · Cócteles","Luz cálida, cabeza libre"];   // cinta roja = noche
+const CINTA2 = ["Café de día","Primer acto 8:00","Luz fría, mente clara","Trabaja · crea · conversa"];   // cinta azul = día
 
 
 /* Métodos de café: nombre, perfil en taza y descripción breve */
@@ -698,6 +745,7 @@ function aplicarActo(acto){
     ? "Cócteles de autor, DJ y vinilos bajo luz cálida. Ven a despejar la cabeza y a sentir que vuelves a empezar. Exprésate como quieras, con estilo."
     : "De día, calma para trabajar, reunirte o no hacer nada. De noche, cócteles y música para despejarte. Exprésate como quieras; aquí nadie te mide.";
   $("#f-acto").value = noche ? "Noche" : "Día";
+  $("#form").dataset.acto = $("#f-acto").value;
   pintarCarta(acto);
   pintarPromos();
 }
@@ -705,6 +753,7 @@ function aplicarActo(acto){
 function pintarCarta(acto){
   $("#t-dia").setAttribute("aria-selected", acto==="dia");
   $("#t-noche").setAttribute("aria-selected", acto==="noche");
+  const piz = $(".pizarra"); piz.classList.toggle("zona-dia", acto==="dia"); piz.classList.toggle("zona-noche", acto==="noche");
   $("#listaCarta").innerHTML = CARTA[acto].map(i =>
     `<div class="item">${ico(i.i,"")}<h3>${esc(i.n)}${i.f?'<span class="firma">de la casa</span>':''}</h3><span class="p">${esc(i.p)}</span><p>${esc(i.d)}</p></div>`).join("");
 }
@@ -737,7 +786,7 @@ function pintarPromos(){
   const card = p => {
     const vivo = hoyL.includes(p) && enHorario(p,t.h);
     const dias = p.dias.length===7 ? "Todos los días" : p.dias.map(x=>DIAS[x].slice(0,3)).join(" · ");
-    return `<article class="ticket">${vivo?'<span class="vivo">Vigente ahora</span>':''}<span class="dia">${esc(dias)}</span><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p><div class="pie"><span class="precio">${esc(p.p)}</span><span class="hora">${esc(fmtH(p.desde))} a ${esc(fmtH(p.hasta))}</span></div></article>`;
+    return `<article class="ticket zona-${p.acto}">${vivo?'<span class="vivo">Vigente ahora</span>':''}<span class="dia">${esc(dias)}</span><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p><div class="pie"><span class="precio">${esc(p.p)}</span><span class="hora">${esc(fmtH(p.desde))} a ${esc(fmtH(p.hasta))}</span></div></article>`;
   };
   let rep = lista.slice();
   while (rep.length < 6) rep = rep.concat(lista);   // asegura que la tira llene la pantalla
@@ -788,6 +837,8 @@ mq.addEventListener("focusin",   () => mqPista.pausa = true);
 mq.addEventListener("focusout",  () => mqPista.pausa = false);
 mq.addEventListener("touchstart",() => mqPista.pausa = !mqPista.pausa, {passive:true});
 
+$("#f-acto").addEventListener("change", e => $("#form").dataset.acto = e.target.value);
+
 /* Reserva: arma el mensaje y el enlace wa.me */
 $("#form").addEventListener("submit", e => {
   e.preventDefault();
@@ -829,7 +880,7 @@ actualizarEstado();
 setInterval(actualizarEstado, 60000);
 
 /* Secciones estáticas renderizadas desde los arreglos de arriba */
-$("#listaMetodos").innerHTML = METODOS.map(m => `<article class="metodo"><b>${esc(m.n)}</b><span>${esc(m.p)}</span><p>${esc(m.d)}</p></article>`).join("");
+$("#listaMetodos").innerHTML = METODOS.map(m => `<article class="metodo zona-dia"><b>${esc(m.n)}</b><span>${esc(m.p)}</span><p>${esc(m.d)}</p></article>`).join("");
 $("#listaColores").innerHTML = COLORES.map(c => `<div class="color"><i style="background:${esc(c.c)}"></i><b>${esc(c.n)}</b><p>${esc(c.d)}</p></div>`).join("");
 $("#listaValores").innerHTML = VALORES.map(v => `<span class="valor">${esc(v.n)}<small>${esc(v.d)}</small></span>`).join("");
 
